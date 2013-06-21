@@ -13,6 +13,7 @@ typedef struct node  {
     int key;
 } node;
 
+typedef enum {FALSE, TRUE} bool;
 
 void insert_node(node *root, int key);
 node *delete_node(node *root, int key);
@@ -25,6 +26,8 @@ node *tree_max(node *root);
 node *tree_min(node *root);
 node *tree_successor(node *root, int key);
 node *tree_predecessor(node *root, int key);
+node *transplant(node *root, int key1, int key2);
+bool ancestor(node *root, int key1, int key2);
 int main()
 {
 
@@ -34,8 +37,9 @@ int main()
     insert_node(root, 20);
     insert_node(root, 31);
     insert_node(root, 25);
-    root = delete_node(root, 25);
-    print_inorder(root);
+    /*root = delete_node(root, 25);*/
+    root = transplant(root, 19, 20);
+    print_preorder(root);
     if (!root) {
 	free_tree(root);
 	root = NULL;
@@ -435,4 +439,51 @@ node *tree_predecessor(node *root, int key)
 	return y;
 }
 
+node *transplant(node *root, int key1, int key2) {
+    if (ancestor(root, key1, key2) == TRUE) {
+
+	node *u = search(root, key1);
+	node *v = search(root, key2);
+	if (!u) 
+	    return NULL;
+	if (!(u->parent )) { // u is root of tree
+	    root=v;
+	}
+	else  //u isn't root
+	    if (v->parent) {
+		v->parent = u->parent;
+		if (u->parent->left == u) 
+		    u->parent->left = v;
+		else 
+		    u->parent->right = v;
+	    }
+
+
+    }
+    else printf("%s\n", "Trying to transplant a tree to one of its own subtrees. Ignoring request.");
+
+
+    return root;
+}
+
+
+
+
+
+
+bool ancestor(node *root, int key1, int key2) {
+
+    node *u = search(root, key1);
+    node *v = search(root, key2);
+
+    while(v) {
+	if (v->parent == u ) 
+	    return TRUE;
+	else
+	    v = v->parent; 
+    } 
+
+    return FALSE;
+
+}
 
