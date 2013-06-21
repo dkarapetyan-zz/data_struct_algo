@@ -88,60 +88,6 @@ void insert_node(node *root, int key)
 
 }
 
-
-
-
-// wrong insert_node algorithm--makes a tree with root--and two branches, one to left, one to right
-
-/*void insert_node(node *root, int key) {*/
-
-/*if (root == NULL){ // trivial case of no tree to start*/
-/*root = calloc(1, sizeof(node));*/
-/*root->key = key; */
-/*return;*/
-/*}*/
-
-/*if (key < root->key ) {*/
-
-/*if (root->left == NULL ) { //base case--either root->left does not exist...*/
-/*root->left = calloc(1, sizeof(node));*/
-/*root->left->key = key;*/
-/*root->left->parent = root;     */
-/*}*/
-/*else if (root->left !=NULL && key > root->left->key ) { // or node lies between root and root->left*/
-/*node *newnode = calloc(1, sizeof(node));*/
-
-/*newnode->left = root->left;*/
-/*root->left->parent = newnode;*/
-/*root->left = newnode;*/
-/*newnode->parent = root;*/
-/*newnode->key=key;  */
-/*}*/
-/*else*/
-/*insert_node(root->left, key); //inductive step*/
-/*}*/
-/*if (key > root->key) {*/
-
-/*if (root->right == NULL ) { //base case--either root->left does not exist...*/
-/*root->right = calloc(1, sizeof(node));*/
-/*root->right->key = key; */
-/*root->right->parent = root;    */
-/*}*/
-/*else if (root->right!= NULL && key < root->right->key ) { // or node lies between root and root->right*/
-/*node *newnode = calloc(1, sizeof(node));*/
-
-/*newnode->right = root->right;*/
-/*root->right->parent = newnode;*/
-/*root->right = newnode;*/
-/*newnode->parent = root;*/
-/*newnode->key=key;  */
-/*}*/
-/*else*/
-/*insert_node(root->right, key); //inductive step*/
-/*}*/
-/*//equal case don't do anything*/
-
-/*}*/
 node *search(node *root, int key) {
 
     if (!root){ //trivial case of no tree--also handles not finding a key and no right or left subtree
