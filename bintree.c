@@ -38,15 +38,12 @@ int main()
     insert_node(root, 20);
     insert_node(root, 31);
     insert_node(root, 25);
-    delete_node(proot, 20);
-    /*root = transplant(root, 19, 20);*/
-    /*print_preorder(root);*/
+    delete_node(proot, 25);
+    print_inorder(root);
     if (root) {
     free_tree(root);
     root = NULL;
     }
-print_preorder(root);
-
 
     return 0;
 }
@@ -179,15 +176,21 @@ void delete_node(node **proot, int key) {
 	node *y = tree_successor(root, nodetoDel->key); // find successor of nodetoDel
 
 	// replace successor position in tree with its only subtree
-	transplant(proot, y , y->right );
+	transplant(proot, y , y->right);
 
 
 
 	// replace nodetoDel with y
-	transplant(proot, nodetoDel , y );
+	transplant(proot, nodetoDel, y);
 	y->left = nodetoDel->left;  // y has no left subtree by design--now assign nodetoDel's left tree to it
-	y->left->parent=y;  
-    }
+	y->left->parent=y;
+      if (nodetoDel->right)  // we transferred a single node--now attach nodetoDel's right tree to it
+	  y->right = nodetoDel->right;
+      else 
+	    y->right = NULL;   
+      
+      }
+      	
     // setting pointer to NULL doesn't do anything--nodetoDel is passed by value to calling function
     free(nodetoDel);
     nodetoDel=NULL;
@@ -350,4 +353,5 @@ bool ancestor(node *root, node *u, node *v) {
     return FALSE;
 
 }
+
 
