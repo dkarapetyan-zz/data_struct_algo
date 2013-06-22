@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 // binary tree implementation
 //
@@ -13,10 +13,10 @@ typedef struct node  {
     int key;
 } node;
 
-typedef enum {FALSE, TRUE} bool;
+typedef enum bool {FALSE, TRUE} bool;
 
 void insert_node(node *root, int key);
-node *delete_node(node *root, int key);
+void delete_node(node **proot, int key);
 node *search(node *root, int key);
 void free_tree(node *root);
 void print_inorder(node *root);
@@ -26,24 +26,27 @@ node *tree_max(node *root);
 node *tree_min(node *root);
 node *tree_successor(node *root, int key);
 node *tree_predecessor(node *root, int key);
-node *transplant(node *root, int key1, int key2);
-bool ancestor(node *root, int key1, int key2);
+void transplant(node **proot, node *u, node *v);
+bool ancestor(node *root, node *u, node *v);
 int main()
 {
 
     node *root = calloc(1, sizeof(node)); // initialization of root struct
+    node **proot = &root;
     root->key=22;
     insert_node(root, 19);
     insert_node(root, 20);
     insert_node(root, 31);
     insert_node(root, 25);
-    /*root = delete_node(root, 25);*/
-    root = transplant(root, 19, 20);
-    print_preorder(root);
-    if (!root) {
-	free_tree(root);
-	root = NULL;
+    delete_node(proot, 20);
+    /*root = transplant(root, 19, 20);*/
+    /*print_preorder(root);*/
+    if (root) {
+    free_tree(root);
+    root = NULL;
     }
+print_preorder(root);
+
 
     return 0;
 }
@@ -100,8 +103,9 @@ node *search(node *root, int key) {
     else if (key > root->key )  // search right subtree
 	return search(root->right, key);
 
-    else if (key == root->key) //aha, found key
+    else if (key == root->key) { //aha, found key
 	return root;
+    }
 
     else
 	return NULL; //haven't found key and have traversed whole tree
@@ -127,72 +131,34 @@ void free_tree(node *root)
 }
 
 
-node *delete_node(node *root, int key) {
-
+void delete_node(node **proot, int key) {
+    node *root = *proot;
+    // we will need a pointer to pointer to later on set nodetoDel to NULL, 
+    //due to variables being passed by value in C
     node *nodetoDel = search(root, key);
 
 
 
-    if (!root || !nodetoDel) //trivial case of no tree or node not existing in tree
-	return NULL;
+    //trivial case of no tree or node not existing in tree. Don't do anything
 
-    // if nodetoDel has no children, we delete it and have its parent point to NULL
-    if (!(nodetoDel->left) && !(nodetoDel->right)) {
-	if (!(nodetoDel->parent)) { // root node
-	    free(nodetoDel);
-	    return NULL;
+    // if nodetoDel has no children
+    if (!(nodetoDel->left ) && !(nodetoDel->right)) {
+	if (root != nodetoDel) {
+	transplant(proot, nodetoDel, NULL);
 	}
-
-	else if (nodetoDel->parent->right == nodetoDel) {
-	    nodetoDel->parent->right = NULL; 
-	    free(nodetoDel);
-	    return root;
-	}
-	else {
-	    nodetoDel->parent->left = NULL; 
-	    free(nodetoDel);
-	    return root;
-	}
-
-
-    }// observe that this also handles case of tree with only one element
+	// we will be freeing nodetoDel at the
+	// end of code--don't want root to be set to NULL here if it's only element
+    }
 
     // if nodetoDel has one child, we replace nodetoDel with its child
-    //
-    else if (!(nodetoDel->left ) && nodetoDel->right ) { //only child nodetoDel has is right
-	if (!(nodetoDel->parent)) { //nodetoDel is root of tree
-	    nodetoDel->right->parent=NULL;
-	    return nodetoDel->right; 
-	}
+
+    else if (!(nodetoDel->left ) && nodetoDel->right ) //only child nodetoDel has is right
+	transplant(proot, nodetoDel, nodetoDel->right);
+
+    else if (nodetoDel->left  && !(nodetoDel->right) )  //only child nodetoDel has is left
+	transplant(proot, nodetoDel, nodetoDel->left);
 
 
-	else if (nodetoDel->parent->left == nodetoDel  ) 
-	    nodetoDel->parent->left=nodetoDel->right;
-
-	else
-	    nodetoDel->parent->right = nodetoDel->right;
-
-	free(nodetoDel);
-	return root;
-    }
-
-    else if (nodetoDel->left  && !(nodetoDel->right) ) {
-
-	if (!(nodetoDel->parent)) {  //nodetoDel is root of tree
-	    nodetoDel->left->parent=NULL;
-	    return nodetoDel->left;
-	}
-
-	else if (nodetoDel->parent->right == nodetoDel  ) 
-	    nodetoDel->parent->right=nodetoDel->left;
-
-	else
-	    nodetoDel->parent->left = nodetoDel->left;       
-
-
-	free(nodetoDel);
-	return root;
-    }
 
     // if nodetoDel has two children--complicated. 
     // Two cases: 
@@ -201,19 +167,9 @@ node *delete_node(node *root, int key) {
     // and replace it with it's right child subtree
 
     else if (nodetoDel->right && !(nodetoDel->right->left)) { // implies right child of NodetoDel is successor
-	if (nodetoDel->parent == NULL ) { // we are deleting root
-	    node *newRoot  = nodetoDel->right; 
-	    newRoot->left = nodetoDel->left; 
-	    free(nodetoDel);
-	    return root->right; 
-	}
-	else { //we are not deleting root
-	    nodetoDel->parent->right = nodetoDel->right;
-	    nodetoDel->right->parent = nodetoDel->parent;     
-	    free(nodetoDel);
-	    return root;
-	}
-    }
+	transplant(proot, nodetoDel, nodetoDel->right);
+	nodetoDel->right->left = nodetoDel->left; // replacement node assigned left child of nodetoDel   
+    }    
 
     // 2) nodetoDel's successor is in the left subtree of it's right child.
     // If so, replace successor position in tree with its right subtree, and replace nodetoDel position with successor  
@@ -221,46 +177,20 @@ node *delete_node(node *root, int key) {
 
 
 	node *y = tree_successor(root, nodetoDel->key); // find successor of nodetoDel
-	/*while(y->left != NULL ) { // find successor of nodetoDel*/
-	/*y = y->left;*/
-	/*}*/
-	if (y->right ) {     // y has a subtree
-	    y->parent->left  = y->right; // replace successor position in tree with its only subtree
-	}
-	else // y doesn't have a subtree
-	    y->parent->left = NULL;  
+
+	// replace successor position in tree with its only subtree
+	transplant(proot, y , y->right );
+
 
 
 	// replace nodetoDel with y
-	if (!(nodetoDel->parent)) //nodetoDel is root
-	    y->parent = NULL;
-
-	else {
-	    y->parent = nodetoDel->parent;
-
-	    if (nodetoDel->parent->right == nodetoDel)
-		nodetoDel->parent->right = y;
-
-	    else
-		nodetoDel->parent->left = y;
-	}
-
-	y->right = nodetoDel->right;
-	y->left = nodetoDel->left;
-	nodetoDel->left->parent = y;
-	nodetoDel->right->parent = y;  
-
-	if (!(nodetoDel->parent)) { //nodetoDel is root
-	    free(nodetoDel);
-	    return y;     
-	}
-	else {
-	    free(nodetoDel);
-	    return root;
-	}
-
+	transplant(proot, nodetoDel , y );
+	y->left = nodetoDel->left;  // y has no left subtree by design--now assign nodetoDel's left tree to it
+	y->left->parent=y;  
     }
-    return NULL;
+    // setting pointer to NULL doesn't do anything--nodetoDel is passed by value to calling function
+    free(nodetoDel);
+    nodetoDel=NULL;
 }
 
 
@@ -385,42 +315,30 @@ node *tree_predecessor(node *root, int key)
 	return y;
 }
 
-node *transplant(node *root, int key1, int key2) {
-    if (ancestor(root, key1, key2) == TRUE) {
+void transplant(node **root, node *u, node *v) {
 
-	node *u = search(root, key1);
-	node *v = search(root, key2);
-	if (!u) 
-	    return NULL;
-	if (!(u->parent )) { // u is root of tree
-	    root=v;
-	}
-	else  //u isn't root
-	    if (v->parent) {
-		v->parent = u->parent;
-		if (u->parent->left == u) 
-		    u->parent->left = v;
-		else 
-		    u->parent->right = v;
-	    }
+    if (!u) {} 
 
-
+    else if (!(u->parent )) { // u is root of tree
+	*root = v;
     }
-    else printf("%s\n", "Trying to transplant a tree to one of its own subtrees. Ignoring request.");
-
-
-    return root;
+    else  {     //u isn't root
+	if (v && v->parent) {
+	    v->parent = u->parent;
+	}
+    if (u->parent->left == u) 
+	u->parent->left = v;
+    else 
+	u->parent->right = v;
+}
 }
 
 
 
 
 
+bool ancestor(node *root, node *u, node *v) {
 
-bool ancestor(node *root, int key1, int key2) {
-
-    node *u = search(root, key1);
-    node *v = search(root, key2);
 
     while(v) {
 	if (v->parent == u ) 
