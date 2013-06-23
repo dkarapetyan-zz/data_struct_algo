@@ -27,7 +27,8 @@ node *tree_min(node *root);
 node *tree_successor(node *root, int key);
 node *tree_predecessor(node *root, int key);
 void transplant(node **proot, node *u, node *v);
-bool ancestor(node *root, node *u, node *v);
+bool is_ancestor(node *root, node *u, node *v);
+node *low_com_ancestor(node *root, node *u, node *v);
 int main()
 {
 
@@ -39,7 +40,7 @@ int main()
     insert_node(root, 31);
     insert_node(root, 25);
     delete_node(proot, 25);
-    print_inorder(root);
+    /*print_inorder(root);*/
     if (root) {
     free_tree(root);
     root = NULL;
@@ -340,7 +341,7 @@ void transplant(node **root, node *u, node *v) {
 
 
 
-bool ancestor(node *root, node *u, node *v) {
+bool is_ancestor(node *root, node *u, node *v) {
 
 
     while(v) {
@@ -354,4 +355,15 @@ bool ancestor(node *root, node *u, node *v) {
 
 }
 
+node *low_com_ancestor(node *root, node *u, node *v) {
+    if(!root || !u || !v)
+	return NULL;
 
+    while( (u->key < root->key && v->key < root->key)  || (u->key > root->key && v->key > root->key)) {
+	if ((u->key < root->key && v->key < root->key) )
+	    root=root->left;
+	else
+	    root=root->right; 
+    }
+    return root;
+}
