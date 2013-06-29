@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <boolobject.h>
 
 // binary tree implementation
 //
+//
 
-typedef struct node  {
+typedef struct node {
 
     struct node *left;
     struct node *right;
     struct node *parent;
     int key;
-} node;
-
-typedef enum bool {FALSE, TRUE} bool;
+} node ;
 
 void insert_node(node *root, int key);
 void delete_node(node **proot, int key);
@@ -27,12 +27,12 @@ node *tree_min(node *root);
 node *tree_successor(node *root, int key);
 node *tree_predecessor(node *root, int key);
 void transplant(node **proot, node *u, node *v);
-bool is_ancestor(node *root, node *u, node *v);
+bool is_ancestor(node *u, node *v);
 node *low_com_ancestor(node *root, node *u, node *v);
 int main()
 {
 
-    node *root = calloc(1, sizeof(node)); // initialization of root struct
+    node *root = (node *)calloc(1, sizeof(node)); // initialization of root struct
     node **proot = &root;
     root->key=22;
     insert_node(root, 19);
@@ -49,12 +49,11 @@ int main()
     return 0;
 }
 
-
 void insert_node(node *root, int key)
 {
 
     if (root == NULL){ // trivial case of no tree to start
-	root = calloc(1, sizeof(node));
+	root = (node *)calloc(1, sizeof(node));
 	root->key = key;
 	return;
     }
@@ -64,7 +63,7 @@ void insert_node(node *root, int key)
     if (key < root->key ) {
 
 	if (root->left == NULL ) { //base case--either root->left does not exist...
-	    root->left = calloc(1, sizeof(node));
+	    root->left = (node *)calloc(1, sizeof(node));
 	    root->left->key = key;
 	    root->left->parent = root;
 	}
@@ -77,7 +76,7 @@ void insert_node(node *root, int key)
     if (key > root->key) {
 
 	if (root->right == NULL ) { //base case--either root->left does not exist...
-	    root->right = calloc(1, sizeof(node));
+	    root->right = (node *)calloc(1, sizeof(node));
 	    root->right->key = key;
 	    root->right->parent = root;   
 	}
@@ -341,17 +340,17 @@ void transplant(node **root, node *u, node *v) {
 
 
 
-bool is_ancestor(node *root, node *u, node *v) {
+bool is_ancestor(node *u, node *v) {
 
 
     while(v) {
 	if (v->parent == u ) 
-	    return TRUE;
+	    return true;
 	else
 	    v = v->parent; 
     } 
 
-    return FALSE;
+    return false;
 
 }
 
