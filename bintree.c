@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <boolobject.h>
+#include <stdbool.h>
 
 // binary tree implementation
 //
