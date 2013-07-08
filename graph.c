@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 typedef struct node {
     int num;
     struct node *next;
@@ -18,7 +19,7 @@ graph *create_graph(int v);
 void add_vertex(graph *MyGraph);
 void add_edge(graph *MyGraph, int src, int dest);
 void delete_edge(graph *MyGraph, int src, int dest);
-
+void delete_vertex(graph *MyGraph, int num);
 void print_graph(graph *MyGraph);
 void print_list(graph *MyGraph, int num);
 void delete_list(graph *MyGraph, int num);
@@ -33,7 +34,8 @@ int main()
     add_vertex(MyGraph);
     add_edge(MyGraph, 3, 5);
     /*delete_edge(MyGraph, 3, 5);*/
-    delete_edge(MyGraph, 3, 4);
+    /*delete_edge(MyGraph, 3, 4);*/
+    delete_vertex(MyGraph, 5);
     print_graph(MyGraph);
     delete_graph(MyGraph);
     MyGraph=NULL;
@@ -102,7 +104,7 @@ void delete_edge(graph *MyGraph, int src, int dest) {
     }
     else { // go along linked list, and delete a node
         node *p, *c;  
-        for (c = MyGraph->AdjArray[src]; c; p=c, c=c->next) {
+        for (p = c = MyGraph->AdjArray[src]; c; p=c, c=c->next) {
             if (c && c->num == dest ) {
                 p->next = c->next;
                 free(c);
@@ -115,7 +117,7 @@ void delete_edge(graph *MyGraph, int src, int dest) {
 
         }
         // by symmetry, repeat above code
-        for (c = MyGraph->AdjArray[dest]; c; p=c, c=c->next) {
+        for (p = c = MyGraph->AdjArray[dest]; c; p=c, c=c->next) {
             if (c && c->num == src ) {
                 p->next = c->next;
                 free(c);
@@ -177,3 +179,32 @@ void delete_graph(graph *MyGraph) {
     free(MyGraph);
 }
 
+void delete_vertex(graph *MyGraph, int num)
+{
+    if (!MyGraph) 
+        printf("%s\n", "Graph does not exist");
+
+    else if (num >= MyGraph->TotalVertices)
+        printf("%s\n", "Vertex does not exist");
+    // delete everything in num adjency list
+    else { 
+        for (node *c = MyGraph->AdjArray[num]; c; c = c->next) {
+            if (c->next) 
+                delete_edge(MyGraph, num, c->next->num);
+        }
+        free(MyGraph->AdjArray[num]);
+        MyGraph->AdjArray[num] = NULL; 
+        // find num in adjency lists of other vertices and delete it
+        for (int i = 0; i < MyGraph->TotalVertices; ++i) {
+
+            for (node *c = MyGraph->AdjArray[i]; c; c= c->next) {
+                if (c->next) {
+                    if (c->next->num == num)
+                        delete_edge(MyGraph, num, c->next->num);
+                }
+
+            }
+        }
+
+    }
+}
