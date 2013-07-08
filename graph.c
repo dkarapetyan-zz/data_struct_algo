@@ -84,7 +84,7 @@ void print_list(graph *MyGraph, int num) {
             if (p->next) 
                 printf("%d""%s", p->num, "->");
             else
-                printf("%d\n", p->num);
+                printf("%d", p->num);
         }
 
     }
@@ -94,6 +94,10 @@ void print_graph(graph *MyGraph) {
     if (MyGraph) {
         for (int i = 0; i < MyGraph->TotalVertices; ++i) {
             print_list(MyGraph, i);
+            if ((i+1) < MyGraph->TotalVertices) {
+                printf("\n");
+            }
+            
         }
 
     }
