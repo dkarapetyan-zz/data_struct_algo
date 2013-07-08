@@ -21,21 +21,22 @@ void delete_edge(graph *MyGraph, int src, int dest);
 
 void print_graph(graph *MyGraph);
 void print_list(graph *MyGraph, int num);
-void free_list(graph *MyGraph, int num);
-void free_graph(graph *MyGraph);
+void delete_list(graph *MyGraph, int num);
+void delete_graph(graph *MyGraph);
 
 
 int main()
 
 {
     graph *MyGraph=create_graph(5);
-    /*add_edge(MyGraph, 3, 4);*/
-    /*add_vertex(MyGraph);*/
-    /*add_edge(MyGraph, 3, 5);*/
+    add_edge(MyGraph, 3, 4);
+    add_vertex(MyGraph);
+    add_edge(MyGraph, 3, 5);
     /*delete_edge(MyGraph, 3, 5);*/
-    /*delete_edge(MyGraph, 3, 4);*/
-    /*print_graph(MyGraph);*/
-    free_graph(MyGraph);
+    delete_edge(MyGraph, 3, 4);
+    print_graph(MyGraph);
+    delete_graph(MyGraph);
+    MyGraph=NULL;
     return 0;
 }
 
@@ -161,17 +162,18 @@ void print_graph(graph *MyGraph) {
 }
 
 
-void free_list(graph *MyGraph, int num) {
-        node *c;  
-        for (c = MyGraph->AdjArray[num]; c; c=c->next) {
-            free(c);
-        }
+void delete_list(graph *MyGraph, int num) {
+    node *c;  
+    for (c = MyGraph->AdjArray[num]; c; c=c->next) {
+        free(c);
+    }
 }
 
-void free_graph(graph *MyGraph) {
-for (int i = 0; i < MyGraph->TotalVertices; ++i) {
-free_list(MyGraph, i);
-}
-free(MyGraph);
+void delete_graph(graph *MyGraph) {
+    for (int i = 0; i < MyGraph->TotalVertices; ++i) {
+        delete_list(MyGraph, i);
+    }
+    free(MyGraph->AdjArray);
+    free(MyGraph);
 }
 
