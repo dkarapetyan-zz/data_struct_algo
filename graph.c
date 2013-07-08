@@ -1,4 +1,4 @@
-// graph implementation with array--suboptimal but quick
+// graph implementation with array of pointers to linked lists
 
 #include <stdio.h>
 #include <stdlib.h>
