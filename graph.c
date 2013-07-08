@@ -25,6 +25,7 @@ int main()
     graph *MyGraph=create_graph(5);
     add_edge(MyGraph, 3, 4);
     add_vertex(MyGraph);
+    add_edge(MyGraph, 3, 5);
     print_graph(MyGraph);
     return 0;
 }
@@ -62,17 +63,27 @@ void add_vertex(graph *MyGraph) {
 
 void add_edge(graph *MyGraph, int src, int dest) {
 
-    // add new dest node at start of linked list for vertex 'src'
-    node *temp = MyGraph->AdjArray[src]->next;
-    MyGraph->AdjArray[src]->next = malloc(sizeof(node));
-    MyGraph->AdjArray[src]->next->next = temp; 
-    MyGraph->AdjArray[src]->next->num = dest;   
+    if (MyGraph->AdjArray[src] == NULL || MyGraph->AdjArray[dest] == NULL ) {
+        printf("%s\n", "One or both vertices don't exist");
+    }
 
-    // by symmetry, must do same for linked list for vertex 'dest'
-    temp = MyGraph->AdjArray[dest]->next;
-    MyGraph->AdjArray[dest]->next = malloc(sizeof(node));
-    MyGraph->AdjArray[dest]->next->next = temp;
-    MyGraph->AdjArray[dest]->next->num = src;   
+    else {
+
+
+
+
+        // add new dest node at start of linked list for vertex 'src'
+        node *temp = MyGraph->AdjArray[src]->next;
+        MyGraph->AdjArray[src]->next = malloc(sizeof(node));
+        MyGraph->AdjArray[src]->next->next = temp; 
+        MyGraph->AdjArray[src]->next->num = dest;   
+
+        // by symmetry, must do same for linked list for vertex 'dest'
+        temp = MyGraph->AdjArray[dest]->next;
+        MyGraph->AdjArray[dest]->next = malloc(sizeof(node));
+        MyGraph->AdjArray[dest]->next->next = temp;
+        MyGraph->AdjArray[dest]->next->num = src;   
+    }
 }
 
 
@@ -97,7 +108,7 @@ void print_graph(graph *MyGraph) {
             if ((i+1) < MyGraph->TotalVertices) {
                 printf("\n");
             }
-            
+
         }
 
     }
