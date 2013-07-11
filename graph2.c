@@ -206,24 +206,27 @@ void print_graph(graph *MyGraph) {
 
 
 void delete_list(graph *MyGraph, int num) {
-    if (MyGraph->VertexList[num]) {
+    vertex *p = search_vertex(MyGraph, num);
+    if (p) {
         adjnode *c, *temp;
-        for (c = temp = MyGraph->VertexList[num]->AdjList; c; c=temp ) {
+        for (c = temp = p->AdjList; c; c=temp ) {
             temp = c->right;
             free(c);
         }
-        MyGraph->VertexList[num]->AdjList=NULL;
+        p->AdjList=NULL;
     }
 }
 
 void delete_graph(graph *MyGraph) {
-    for (int i = 0; i < MyGraph->TotalVertices; ++i) {
+    vertex *p, *temp;
+    p=temp=MyGraph->VertexList;
+    for (int i = 0; p; ++i, p=temp) {
             delete_list(MyGraph, i);
             // aren't using delete_vertex because it changes TotalVertices variable,
             // causing complications in code
-            free(MyGraph->VertexList[i]);
+            temp = p->down; 
+            free(p);
         }
-    free(MyGraph->VertexList);
     free(MyGraph);
 }
 
@@ -232,16 +235,13 @@ void delete_vertex(graph *MyGraph, int num)
     if (!MyGraph) 
         printf("%s\n", "Graph does not exist");
 
-    else if (num >= MyGraph->TotalVertices)
-        printf("%s\n", "Vertex does not exist");
     else {
+        vertex *p = MyGraph->VertexList;
         // delete all edges of vertex
-        for (int i = 0; i < MyGraph->TotalVertices; ++i) {
+        for (int i = 0; p; ++i, p = p->down) {
             delete_edge(MyGraph, num, i);
         }
         delete_list(MyGraph, num);
-        free(MyGraph->VertexList[num]);
-        MyGraph->VertexList[num] = NULL;
         MyGraph->TotalVertices-=1;
     }
 }
