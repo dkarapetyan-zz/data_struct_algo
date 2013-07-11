@@ -142,15 +142,15 @@ void add_edge(graph *MyGraph, int src, int dest) {
 }
 
 void delete_edge(graph *MyGraph, int src, int dest) {
-    if (MyGraph->VertexList[src] == NULL || MyGraph->VertexList[dest] == NULL ) {
-        return;
-    }
-    else { // go along linked list, and delete a node
+    vertex *vs = search_vertex(MyGraph, src);
+    vertex *vd = search_vertex(MyGraph, dest);
+
+    if (vs && vd) { // go along linked list, and delete a node
         adjnode *p, *c;  
-        for (p = c = MyGraph->VertexList[src]->AdjList; c; p=c, c=c->right) {
+        for (p = c = vs->AdjList; c; p=c, c=c->right) {
             if (c->vertexptr->num == dest ) {
-                if (c == MyGraph->VertexList[src]->AdjList) { 
-                    MyGraph->VertexList[src]->AdjList = c->right;
+                if (c == vs->AdjList) { 
+                    vs->AdjList = c->right;
                     free(c);
                     break;
                 }
@@ -162,10 +162,10 @@ void delete_edge(graph *MyGraph, int src, int dest) {
             }
         }
         // by symmetry, repeat above code
-        for (p = c = MyGraph->VertexList[dest]->AdjList; c; p=c, c=c->right) {
+        for (p = c = vd->AdjList; c; p=c, c=c->right) {
             if (c->vertexptr->num == src ) {
-                if (c == MyGraph->VertexList[dest]->AdjList) { 
-                    MyGraph->VertexList[dest]->AdjList = c->right;
+                if (c == vd->AdjList) { 
+                    vd->AdjList = c->right;
                     free(c);
                     break;
                 }
@@ -181,12 +181,11 @@ void delete_edge(graph *MyGraph, int src, int dest) {
 
 
 void print_list(graph *MyGraph, int num) {
-    if (num >= MyGraph->TotalVertices || !MyGraph) 
-        return;
-    else if (MyGraph->VertexList[num]) { // standard for loop for traversing linked list
-        printf("%d", MyGraph->VertexList[num]->num);
-        for (adjnode *p = MyGraph->VertexList[num]->AdjList; p; p = p->right) {
-                printf("%s%d", "->", p->vertexptr->num);
+    vertex *p = search_vertex(MyGraph, num);
+    if (p && !MyGraph) { // standard for loop for traversing linked list
+        printf("%d", p->num);
+        for (adjnode *adj = p->AdjList; adj; adj = adj->right) {
+                printf("%s%d", "->", adj->vertexptr->num);
         }
 
     }
@@ -194,12 +193,10 @@ void print_list(graph *MyGraph, int num) {
 void print_graph(graph *MyGraph) {
 
     if (MyGraph) {
-        for (int i = 0; i < MyGraph->TotalVertices; ++i) {
+        vertex *p = MyGraph->VertexList;
+        for (int i = 0; p; ++i, p = p->down) {
             print_list(MyGraph, i);
-            if ((i+1) < MyGraph->TotalVertices) {
                 printf("\n");
-            }
-
         }
 
     }
