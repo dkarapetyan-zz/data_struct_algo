@@ -93,6 +93,14 @@ k = p->num;
 return k;
 }
 
+vertex *search_vertex(graph *MyGraph, int num) {
+ vertex *p = MyGraph->VertexList;
+    while(p) { // traverse to end of linked list
+    if (p->num ==num)
+        return p;
+    }
+    return NULL;
+}
 
 void add_vertex(graph *MyGraph) {
     int k = max_vertex(MyGraph) +1;
@@ -113,27 +121,23 @@ void add_vertex(graph *MyGraph) {
 
 void add_edge(graph *MyGraph, int src, int dest) {
 
-    if (MyGraph->VertexList[src] == NULL || MyGraph->VertexList[dest] == NULL ) {
-        printf("%s\n", "One or both vertices don't exist");
-    }
+    vertex *vs = search_vertex(MyGraph, src);
+    vertex *vd = search_vertex(MyGraph, dest);
 
-    else {
-
-
-
+    if (vs && vd ) {
 
         // add new dest node at start of linked list for vertex 'src'
-      adjnode *temp =  MyGraph->VertexList[src]->AdjList;
-      MyGraph->VertexList[src]->AdjList = malloc(sizeof(adjnode));
-      MyGraph->VertexList[src]->AdjList->right = temp;
-      MyGraph->VertexList[src]->AdjList->vertexptr = MyGraph->VertexList[dest];   
+      adjnode *temp =  vs->AdjList;
+      vs->AdjList = malloc(sizeof(adjnode));
+      vs->AdjList->right = temp;
+      vs->AdjList->vertexptr = vd;   
 
        
         // by symmetry, must do same for linked list for vertex 'dest'
-      temp =  MyGraph->VertexList[dest]->AdjList;
-      MyGraph->VertexList[dest]->AdjList = malloc(sizeof(adjnode));
-      MyGraph->VertexList[dest]->AdjList->right = temp;
-      MyGraph->VertexList[dest]->AdjList->vertexptr = MyGraph->VertexList[src];   
+      temp =  vd->AdjList;
+      vd->AdjList = malloc(sizeof(adjnode));
+      vd->AdjList->right = temp;
+      vd->AdjList->vertexptr = vs;   
     }
 }
 
