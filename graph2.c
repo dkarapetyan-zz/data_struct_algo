@@ -16,8 +16,8 @@ typedef struct vertex {
 
 
 typedef struct adjnode{
-vertex *vertexptr;
-struct adjnode *right;
+    vertex *vertexptr;
+    struct adjnode *right;
 }
 adjnode;
 
@@ -51,9 +51,9 @@ int main()
     add_edge(MyGraph, 3, 4);
     add_vertex(MyGraph);
     add_edge(MyGraph, 3, 5);
-    /*[>delete_edge(MyGraph, 3, 5);<]*/
-    /*[>delete_edge(MyGraph, 3, 4);<]*/
-    delete_vertex(MyGraph, 3);
+    /*delete_edge(MyGraph, 3, 5);*/
+    /*delete_edge(MyGraph, 3, 4);*/
+    /*delete_vertex(MyGraph, 0);*/
     /*print_graph(MyGraph);*/
     delete_graph(MyGraph);
     /*MyGraph=NULL;*/
@@ -67,15 +67,13 @@ graph *create_graph(int v) { // put graph on heap
         return NULL;
 
     else {
-        graph *MyGraph = malloc(sizeof(graph));
+        graph *MyGraph = calloc(1,sizeof(graph));
 
         // initialize linked list of vertices (linked list going downwards), each with possible adjency linked list going to right
-        vertex *p = MyGraph->VertexList = malloc(sizeof(vertex)); 
+        vertex *p = MyGraph->VertexList = calloc(1,sizeof(vertex)); 
         for (int i = 1; i < v; ++i, p = p->down) {
-            p->down = malloc(sizeof(vertex));
+            p->down = calloc(1, sizeof(vertex));
             p->down->num = i;
-            p->down->AdjList = NULL;
-            p->down->parent = NULL;
             p->down->color = "white"; 
         }
         MyGraph->TotalVertices = v;
@@ -83,21 +81,23 @@ graph *create_graph(int v) { // put graph on heap
         return MyGraph;
     }
 }
+
 int max_vertex(graph *MyGraph){
-vertex *p = MyGraph->VertexList;
-int k=0;
-while(p) {
-if (k < (p->num)) 
-k = p->num;
-}
-return k;
+    int k=0;
+    for (vertex *p = MyGraph->VertexList; p; p = p->down) {
+        if (k < (p->num))  
+            k = p->num;
+    }
+    return k;
 }
 
 vertex *search_vertex(graph *MyGraph, int num) {
- vertex *p = MyGraph->VertexList;
+    vertex *p = MyGraph->VertexList;
     while(p) { // traverse to end of linked list
-    if (p->num ==num)
-        return p;
+        if (p->num ==num) 
+            return p;
+        else
+            p = p->down;
     }
     return NULL;
 }
@@ -107,9 +107,9 @@ void add_vertex(graph *MyGraph) {
     vertex *p;
     p  = MyGraph->VertexList;
     while(p->down) { // traverse to end of linked list
-    p = p->down; 
+        p = p->down; 
     }
-    p->down = malloc(sizeof(vertex));
+    p->down = calloc(1,sizeof(vertex));
     p->down->num = k;
     p->down->AdjList = NULL;
     p->down->parent = NULL;
@@ -127,17 +127,17 @@ void add_edge(graph *MyGraph, int src, int dest) {
     if (vs && vd ) {
 
         // add new dest node at start of linked list for vertex 'src'
-      adjnode *temp =  vs->AdjList;
-      vs->AdjList = malloc(sizeof(adjnode));
-      vs->AdjList->right = temp;
-      vs->AdjList->vertexptr = vd;   
+        adjnode *temp =  vs->AdjList;
+        vs->AdjList = calloc(1,sizeof(adjnode));
+        vs->AdjList->right = temp;
+        vs->AdjList->vertexptr = vd;   
 
-       
+
         // by symmetry, must do same for linked list for vertex 'dest'
-      temp =  vd->AdjList;
-      vd->AdjList = malloc(sizeof(adjnode));
-      vd->AdjList->right = temp;
-      vd->AdjList->vertexptr = vs;   
+        temp =  vd->AdjList;
+        vd->AdjList = calloc(1,sizeof(adjnode));
+        vd->AdjList->right = temp;
+        vd->AdjList->vertexptr = vs;   
     }
 }
 
@@ -182,10 +182,10 @@ void delete_edge(graph *MyGraph, int src, int dest) {
 
 void print_list(graph *MyGraph, int num) {
     vertex *p = search_vertex(MyGraph, num);
-    if (p && !MyGraph) { // standard for loop for traversing linked list
+    if (p && MyGraph) { // standard for loop for traversing linked list
         printf("%d", p->num);
         for (adjnode *adj = p->AdjList; adj; adj = adj->right) {
-                printf("%s%d", "->", adj->vertexptr->num);
+            printf("%s%d", "->", adj->vertexptr->num);
         }
 
     }
@@ -193,10 +193,9 @@ void print_list(graph *MyGraph, int num) {
 void print_graph(graph *MyGraph) {
 
     if (MyGraph) {
-        vertex *p = MyGraph->VertexList;
-        for (int i = 0; p; ++i, p = p->down) {
-            print_list(MyGraph, i);
-                printf("\n");
+        for (vertex *p = MyGraph->VertexList; p; p = p->down) {
+            print_list(MyGraph, p->num);
+            printf("\n");
         }
 
     }
@@ -217,17 +216,14 @@ void delete_list(graph *MyGraph, int num) {
     }
 }
 
-void delete_graph(graph *MyGraph) {
+void delete_graph(graph *MyGraph) { // delete each vertex
     vertex *p, *temp;
-    p=temp=MyGraph->VertexList;
-    for (int i = 0; p; ++i, p=temp) {
-            delete_list(MyGraph, i);
-            // aren't using delete_vertex because it changes TotalVertices variable,
-            // causing complications in code
-            temp = p->down; 
-            free(p);
-        }
-    free(MyGraph);
+    for (temp = p = MyGraph->VertexList; p;  p = temp) {
+        temp = p->down; 
+        delete_vertex(MyGraph, p->num);
+    }
+    free(MyGraph); //vertices aree all now recursively freed--
+    // so now can free MyGraph struct
 }
 
 void delete_vertex(graph *MyGraph, int num)
@@ -242,6 +238,24 @@ void delete_vertex(graph *MyGraph, int num)
             delete_edge(MyGraph, num, i);
         }
         delete_list(MyGraph, num);
+        p = MyGraph->VertexList;
+        if (p->num == num) { // if start of linked list is to be deleted
+            MyGraph->VertexList = p->down;
+            free(p);
+        }
+
+        else {
+            for (; p; p = p->down) { // find vertex before one to be deleted
+                if (p->down->num == num) {
+                    break;
+                }
+            }
+            if (p) {
+                vertex *temp = p->down;
+                p->down = p->down->down;
+                free(temp);
+            }
+        }
         MyGraph->TotalVertices-=1;
     }
 }
@@ -249,35 +263,35 @@ void delete_vertex(graph *MyGraph, int num)
 /*void enqueue(node * vertex)*/
 /*{*/
 
-  /*if (head==NULL) {*/
-    /*head = (node *) malloc(sizeof(node));*/
-    /*head->color = vertex->color;*/
-    /*head->num = vertex->num;*/
-    /*head->parent = vertex->parent;*/
-    /*head->right=NULL;*/
-    /*tail = head;*/
-  /*}*/
-  /*else {*/
-    /*node *p = malloc(sizeof(node));*/
-    /*p->right=tail;*/
-    /*tail=p; // p is the new tail*/
-    /*tail->color = vertex->color;*/
-    /*tail->num = vertex->num;       */
-    /*tail->parent=vertex->parent;*/
+/*if (head==NULL) {*/
+/*head = (node *) calloc(1,sizeof(node));*/
+/*head->color = vertex->color;*/
+/*head->num = vertex->num;*/
+/*head->parent = vertex->parent;*/
+/*head->right=NULL;*/
+/*tail = head;*/
+/*}*/
+/*else {*/
+/*node *p = calloc(1,sizeof(node));*/
+/*p->right=tail;*/
+/*tail=p; // p is the new tail*/
+/*tail->color = vertex->color;*/
+/*tail->num = vertex->num;       */
+/*tail->parent=vertex->parent;*/
 
-  /*}*/
+/*}*/
 
 
 /*}*/
 
 /*node *dequeue(node *head)*/
 /*{*/
-  /*if (head == NULL) {*/
-    /*return head;*/
-  /*}*/
-  /*node *p = head;*/
-  /*head = head->right;*/
-  /*free(p); // free memory that still has data from old dequeueed head*/
-  /*p = NULL; // avoid program having any dangerous unassigned pointers*/
-  /*return head; //return new head*/
+/*if (head == NULL) {*/
+/*return head;*/
+/*}*/
+/*node *p = head;*/
+/*head = head->right;*/
+/*free(p); // free memory that still has data from old dequeueed head*/
+/*p = NULL; // avoid program having any dangerous unassigned pointers*/
+/*return head; //return new head*/
 /*}*/
