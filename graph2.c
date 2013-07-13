@@ -2,13 +2,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#define sentinel -1
 
 struct adjnode;
 
 typedef struct vertex {
     int num;
+    int distroot;
     char *color;
-    struct vertex *parent;
+    struct vertex *parent; 
     struct adjnode *AdjList;
     struct vertex *down;
 
@@ -30,8 +33,14 @@ typedef struct graph {
 } graph;
 
 
-vertex *head = NULL; // head of queue
-vertex *tail = NULL; // tail of queue
+typedef struct qnode {
+    struct qnode *right;
+    vertex *vertexptr;
+} qnode;
+
+
+qnode *head = NULL; // head of queue
+qnode *tail = NULL; // tail of queue
 
 graph *create_graph(int v);
 void add_vertex(graph *MyGraph);
@@ -42,19 +51,25 @@ void print_graph(graph *MyGraph);
 void print_list(graph *MyGraph, int num);
 void delete_list(graph *MyGraph, int num);
 void delete_graph(graph *MyGraph);
-void bfs(graph *MyGraph);
-
+void bfs(graph *MyGraph, int r);
+vertex *search_vertex(graph *MyGraph, int num); 
+void print_path(graph *MyGraph, int num, int num2);
 int main()
 
 {
     graph *MyGraph=create_graph(5);
     add_edge(MyGraph, 3, 4);
+    add_edge(MyGraph, 2, 1);
+    add_edge(MyGraph, 2,4);
+    add_edge(MyGraph, 0,3);
     add_vertex(MyGraph);
     add_edge(MyGraph, 3, 5);
     /*delete_edge(MyGraph, 3, 5);*/
     /*delete_edge(MyGraph, 3, 4);*/
     /*delete_vertex(MyGraph, 0);*/
-    /*print_graph(MyGraph);*/
+    print_graph(MyGraph);
+    bfs(MyGraph, 2);
+    /*print_path(MyGraph, 2, 4);*/
     delete_graph(MyGraph);
     /*MyGraph=NULL;*/
     return 0;
@@ -260,38 +275,94 @@ void delete_vertex(graph *MyGraph, int num)
     }
 }
 
-/*void enqueue(node * vertex)*/
-/*{*/
+void enqueue(vertex *v)
+{
 
-/*if (head==NULL) {*/
-/*head = (node *) calloc(1,sizeof(node));*/
-/*head->color = vertex->color;*/
-/*head->num = vertex->num;*/
-/*head->parent = vertex->parent;*/
-/*head->right=NULL;*/
-/*tail = head;*/
-/*}*/
-/*else {*/
-/*node *p = calloc(1,sizeof(node));*/
-/*p->right=tail;*/
-/*tail=p; // p is the new tail*/
-/*tail->color = vertex->color;*/
-/*tail->num = vertex->num;       */
-/*tail->parent=vertex->parent;*/
-
-/*}*/
+    if (head==NULL) {
+        head = calloc(1,sizeof(qnode));
+        head->vertexptr = v;
+        tail = head;
+    }
+    else {
+        qnode *p = calloc(1,sizeof(qnode));
+        tail->right = p; // insert p 
+        tail = p; // p is the new tail
+    }
 
 
-/*}*/
+}
 
-/*node *dequeue(node *head)*/
-/*{*/
-/*if (head == NULL) {*/
-/*return head;*/
-/*}*/
-/*node *p = head;*/
-/*head = head->right;*/
-/*free(p); // free memory that still has data from old dequeueed head*/
-/*p = NULL; // avoid program having any dangerous unassigned pointers*/
-/*return head; //return new head*/
-/*}*/
+vertex *dequeue()
+{
+    if (head == NULL) {
+        return NULL;
+    }
+    qnode *p = head;
+    vertex *v = head->vertexptr;
+    p = head;    
+    v = head->vertexptr;
+    head = head->right;
+    free(p); // free memory that still has data from old dequeueed head
+    return v; //return popped vertex 
+}
+
+void bfs(graph *MyGraph, int r) {
+
+    vertex *root, *v;
+    root = v = NULL;
+    for (v = MyGraph->VertexList; v  ; v = v->down) {
+        if (v->num != r) { // change attributes of all non-root vertices
+
+            v->color = "white";
+            v->distroot = sentinel;
+            v->parent = NULL;
+        }
+        else
+            root  = v; // store root vertex
+    }
+    if (root) { // don't return anything if root doesn't exist
+
+        root->color = "black"; // change attributes of root vertex
+        root->distroot = 0;
+        root->parent = NULL;
+
+        enqueue(root);
+
+        while(head) {
+            vertex *v = dequeue();
+
+            for (adjnode *adj = v->AdjList; adj; adj = adj->right) {
+
+                if (strcmp(adj->vertexptr->color,"white")) {
+
+                    adj->vertexptr->distroot=v->distroot +1;
+                    adj->vertexptr->parent = v;
+                    enqueue(adj->vertexptr);
+
+                }
+
+                v->color = "black";
+            }
+        }
+
+
+    }
+}
+
+void print_path(graph *MyGraph, int num, int num2) {
+    vertex *s = search_vertex(MyGraph, num);
+    vertex *v = search_vertex(MyGraph, num2);
+    if (v == s) {
+        printf("%d", s->num);
+    }
+    else if (v->parent == NULL)
+        printf("%s\n", "No path to this vertex exists");
+
+    else {
+
+        print_path(MyGraph, s->num, v->parent->num);
+        printf("%d", v->num);
+    }
+
+}
+
