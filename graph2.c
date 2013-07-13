@@ -67,9 +67,9 @@ int main()
     /*delete_edge(MyGraph, 3, 5);*/
     /*delete_edge(MyGraph, 3, 4);*/
     /*delete_vertex(MyGraph, 0);*/
-    print_graph(MyGraph);
+    /*print_graph(MyGraph);*/
     bfs(MyGraph, 2);
-    /*print_path(MyGraph, 2, 4);*/
+    print_path(MyGraph, 2, 3);
     delete_graph(MyGraph);
     /*MyGraph=NULL;*/
     return 0;
@@ -287,6 +287,7 @@ void enqueue(vertex *v)
         qnode *p = calloc(1,sizeof(qnode));
         tail->right = p; // insert p 
         tail = p; // p is the new tail
+        tail->vertexptr = v;
     }
 
 
@@ -333,7 +334,7 @@ void bfs(graph *MyGraph, int r) {
 
             for (adjnode *adj = v->AdjList; adj; adj = adj->right) {
 
-                if (strcmp(adj->vertexptr->color,"white")) {
+                if (strcmp(adj->vertexptr->color,"white") == 0) {
 
                     adj->vertexptr->distroot=v->distroot +1;
                     adj->vertexptr->parent = v;
@@ -359,9 +360,8 @@ void print_path(graph *MyGraph, int num, int num2) {
         printf("%s\n", "No path to this vertex exists");
 
     else {
-
         print_path(MyGraph, s->num, v->parent->num);
-        printf("%d", v->num);
+        printf("%s%d", "->", v->num);
     }
 
 }
