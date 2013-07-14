@@ -52,6 +52,7 @@ void print_list(graph *MyGraph, int num);
 void delete_list(graph *MyGraph, int num);
 void delete_graph(graph *MyGraph);
 void bfs(graph *MyGraph, int r);
+void dfs(graph *MyGraph, int r);
 vertex *search_vertex(graph *MyGraph, int num); 
 void print_path(graph *MyGraph, int num, int num2);
 int main()
@@ -363,6 +364,13 @@ void print_path(graph *MyGraph, int num, int num2) {
         print_path(MyGraph, s->num, v->parent->num);
         printf("%s%d", "->", v->num);
     }
+
+}
+void dfs(graph *MyGraph, int r) {
+
+for (vertex *p = MyGraph->VertexList; p ; p = p->down) {
+
+}
 
 }
 
