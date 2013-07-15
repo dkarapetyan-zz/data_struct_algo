@@ -124,7 +124,7 @@ void print_entries(node *hash_table[]) {
 
 void free_hash_table(node *hash_table[], unsigned length)
 {
-    int i=0;
+    unsigned int i=0;
     for ( ; i < length; ++i) {
 	if (hash_table[i]  && hash_table[i]->next == NULL)  {
 	    free(hash_table[i]);
