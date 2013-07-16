@@ -2,13 +2,13 @@
 #include <string.h>
 
 
-/*#ifndef swap*/
-/*#define swap(T, a,b) { \*/
-/*T temp=a; \*/
-/*a=b; \*/
-/*b=temp; \*/
-/*}*/
-/*#endif*/
+#ifndef swap
+#define swap(T, a,b) { \
+T temp=a; \
+a=b; \
+b=temp; \
+}
+#endif
 
 
 void reverse_string(char *string, int len);
@@ -43,12 +43,9 @@ int main()
 
 void reverse_string(char *string, int len)
 {
-    int temp, i, j;
-    for (i = 0, j = len-1; i < j; i++, j--) { 
-        temp = string[i];
-        string[i] = string[j];
-        string[j] = temp; 
-    }
+    int i, j;
+    for (i = 0, j = len-1; i < j; i++, j--)  
+        swap(char, string[i], string[j])    
 }
 
 void reverse_words_string(char *string) {
