@@ -20,7 +20,7 @@ node * tail;
 
 void flatten(void)
 {
-    if (head = NULL)
+    if (head == NULL)
 	return;
 
     tail = head;
