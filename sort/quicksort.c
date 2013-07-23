@@ -5,53 +5,60 @@
 //
 //
 
-void *s quicksort(int *v, int k, int m);
+void quicksort(int *array, int k, int m);
 
 int main()
 {
-int array[]={1,4,2,5,20};
-quicksort(array, 0, 5);
-  return 0;
+    int my_array[]={1, 7, 4, 12, 9, 2};
+    quicksort(my_array, 0, 5);
+    for (int i=0; i < 6; i++) {
+        printf("%d ", my_array[i]);
+    }
+    return 0;
 }
 
 
 // swap function
 //
 
-void swap(int *s, int k, int m)
+void swap(int *array, int k, int m)
 {
 
-  int temp;
-  temp = s[k];
-  s[k] = s[m];
-  s[m]= temp;
+    int temp;
+    temp = array[k];
+    array[k] = array[m];
+    array[m]= temp;
 }
 
 
-void *s quicksort(int *v, int left, int right)
-  // we partition using the middle element of the array
-{
-  // base step
-  int last;
-  mid = (left + right)/2;
-if (left >= right)
-return (int) -1;
+void quicksort(int *array, int left, int right) {
+    // we partition using the pivotdle element of the array
+    // base step
+    int last;
+    int pivot = (left + right)/2;
 
-//inductive (i.e. recursive) step
-//
-swap(v, left, mid); // make partition element first element of array
-last = left;
-for (int i=left +1 ; i <= right ; ++i) {
-if (v[i] < v[left]) {
-  swap(v, i, ++last);
-}
-// have all elements less than v[left] immediately following it--once this list terminates, have all ellements greater than v[left]. Now we restore partition element
-swap(v, left, last); //done partitioning--last is our partition element
-qsort(v, left, last-1);
-qsort(v, last+1, right);  
-}
-return (int *) v;
-  
+    if (left - right > 1) // error checking--negative array length
+        printf("%s\n", "You have supplied an array of negative length. Please try again");
+
+    else if (left - right ==  1) // array of length 0;
+    return;
+
+    else if (left - right == 0) // array of length 1
+        return;
+
+    else { // array of length greater than 1
+        //inductive (i.e. recursive) step
+        swap(array, left, pivot); // make partition element first element of array
+        last = left;
+        for (int i=left +1 ; i <= right ; ++i) {
+            if (array[i] < array[left]) 
+                swap(array, i, ++last);
+        }
+        // have all elements less than array[left] immediately following it--once this list terminates, have all ellements greater than array[left]. Now we restore partition element
+        swap(array, left, last); //done partitioning--last is our partition element
+        quicksort(array, left, last-1);
+        quicksort(array, last+1, right);  
+    }
 }
 
 
