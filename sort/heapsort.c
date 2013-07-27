@@ -50,6 +50,7 @@ void max_heapify(int array[], int len, int index)
 {
 
     int largest;
+    // error checking
     if (index >= len )
     {
         printf("%s\n", "No int there. Please try again");
@@ -58,6 +59,7 @@ void max_heapify(int array[], int len, int index)
 
     else
     {
+        // check left and right children of index
         if (left(index) < len  && right(index) < len  )
         {
 
@@ -80,6 +82,7 @@ void max_heapify(int array[], int len, int index)
 
     if (largest != index && array[index] < array[largest])
     {
+        // percolate down a node, and repeat 
         swap(array, largest, index);
         max_heapify(array, len, largest);
     }
@@ -87,12 +90,16 @@ void max_heapify(int array[], int len, int index)
 
 void build_max_heap(int array[], int len)
 {
+    // non-leaves are one row up from bottom row.
+    // leaves are already 1-node heaps
     for (int i=(len-2)/2; i >=0; i--) 
         max_heapify(array, len, i);
 }
 void my_heapsort(int array[], int len)
 {
     build_max_heap(array, len);
+    // First element is now largest of array. Exchange with last
+    // then "heapify" new first element. Everything below it is a heap
     for (int i = len -1; i >= 1; i--)
     {
         swap(array, 0, i);
