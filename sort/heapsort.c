@@ -1,96 +1,103 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#define SIZE 5
+#define SIZE 10
 
-typedef struct heapnode {
-    int *left;
-    int *right;
-    int *parent;
-    int *key;
-} heapnode;
+void my_heapsort(int array[], int len);
+void max_heapify(int array[], int len, int index);
+void build_max_heap(int array[], int len);
+void swap(int array[], int x, int y);
+int left(int x);
+int right(int x);
 
-void my_heapsort(heapnode array[], int len, int start, int end);
-void max_heapify(heapnode array[], int len, int index);
-void build_max_heap(heapnode array[], int len, int start, int end);
 
 int main()
 {
-    heapnode my_array[SIZE];
+    int my_array[SIZE];
 
     for (int i = 0; i < SIZE; i++)
-    {
-        memset(&my_array[i], 0, sizeof(heapnode));
-        *(my_array[i].key) = rand()%35;
-        *(my_array[i].parent) = i/2;
+        my_array[i]= rand()%32;
 
-        if (i < (SIZE-2)/2)
-        {
-            *(my_array[i].left) = 2i;
-            *(my_array[i].right) = 2i+1;
-        }
-
-    }
-
-
-
-
-    max_heapify(my_array, SIZE, 2);
+    my_heapsort(my_array, SIZE);
 
     for (int i = 0; i < SIZE; i++)
-        printf("%d ", *(my_array[i].key)); 
-    
+        printf("%d ", my_array[i]); 
+
     return 0;
 }
 
-void swap_keys(heapnode x, heapnode y)
+
+
+
+void swap(int array[], int x, int y)
 {
-    heapnode temp = x;
-    x = y;
-    y= temp;
+    int temp = array[x];
+    array[x] = array[y];
+    array[y]= temp;
+}
+
+int left(int x)
+{
+    return 2*x + 1;
+}
+
+int right(int x)
+{
+    return 2*x + 2;
 }
 
 
-void max_heapify(heapnode array[], int len, int index) {
+void max_heapify(int array[], int len, int index)
+{
 
     int largest;
-    if (index > len -1 ) {
-        printf("%s\n", "No heapnode there. Please try again");
+    if (index >= len )
+    {
+        printf("%s\n", "No int there. Please try again");
         return;
     }
 
-    else {
+    else
+    {
+        if (left(index) < len  && right(index) < len  )
+        {
 
-        if (array[index].left && array[index].right  ) {
-
-            if (array[index].left < array[index].right) 
-                largest = *(array[index].right);
+            if (array[left(index)] < array[right(index)]) 
+                largest = right(index);
 
             else
-                largest = *(array[index].left); 
+                largest = left(index); 
 
         }
-        else if (array[index].left)
-            largest = *(array[index].left);
+        else if (left(index) < len)
+            largest = left(index);
 
-        else if (array[index].right)
-            largest = *(array[index].right);
+        else if (right(index) < len)
+            largest = right(index);
 
         else
             largest = index;
     }
 
-    if (largest != index) {
-        swap_keys(array[largest], array[index]);
+    if (largest != index && array[index] < array[largest])
+    {
+        swap(array, largest, index);
         max_heapify(array, len, largest);
     }
 }
 
-void build_max_heap(heapnode array[], int len, int start, int end) {
-    if (end > len -1 || end < start) 
-        printf("%s\n", "Invalid start and end points. Please try again");
-
-    for (int i =len/2; i >=1; i--) 
+void build_max_heap(int array[], int len)
+{
+    for (int i=(len-2)/2; i >=0; i--) 
         max_heapify(array, len, i);
+}
+void my_heapsort(int array[], int len)
+{
+    build_max_heap(array, len);
+    for (int i = len -1; i >= 1; i--)
+    {
+        swap(array, 0, i);
+        if (i > 0)
+            max_heapify(array, i, 0);
+    }
 }
 
