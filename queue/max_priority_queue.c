@@ -43,7 +43,7 @@ int main()
 
     build_max_heap(&my_heap);
     insert_key(&my_heap, 50);
-    printf("%d\n", heap_pop_max(&my_heap));
+    printf("%d\n", heap_max(&my_heap));
     printf("%d\n", heap_pop_max(&my_heap));
 
     for (int i = 0; i < my_heap.hlength; i++)
