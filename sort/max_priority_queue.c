@@ -5,10 +5,7 @@
 #define SIZE 100
 #define SENTINEL -9999
 // maximum priority queue using heap array
-//
-//
-//
-//
+
 typedef struct node
 {
     int key;
