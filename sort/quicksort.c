@@ -32,7 +32,7 @@ void swap(int *array, int k, int m)
 
 
 void quicksort(int *array, int left, int right) {
-    // we partition using the pivotdle element of the array
+    // we partition using the pivot element of the array
     // base step
     int last;
     int pivot = (left + right)/2;
