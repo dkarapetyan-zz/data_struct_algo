@@ -10,15 +10,15 @@
 
 
 typedef struct node {
-    char *word;
-    char *def;
+    const char *word;
+    const char *def;
     struct node *next;
 } node;
 
-unsigned hash(char *w);
-void insert_entry(node *hash_table[], char *w, char *d);
-void delete_entry(node *hash_table[], char *w);
-node *search_entry(node *hash_table[], char *w);
+unsigned hash(const char *w);
+void insert_entry(node *hash_table[], const char *w, const char *d);
+void delete_entry(node *hash_table[], const char *w);
+node *search_entry(node *hash_table[], const char *w);
 void print_entry(node *hash_table[], unsigned k);
 void print_entries(node *hash_table[]);
 void free_hash_table(node *hash_table[], unsigned length);
@@ -36,7 +36,6 @@ int main()
     insert_entry(hash_table, "dubl", "collision with duck");
     insert_entry(hash_table, "cow", "an animal that is tasty");
     delete_entry(hash_table, "duck" );
-
     print_entries(hash_table);
     free_hash_table(hash_table, HASHSIZE);
     /*print_entry(hash_table, 107);*/
@@ -46,7 +45,7 @@ int main()
 
 
 
-unsigned hash(char *s) {
+unsigned hash(const char *s) {
 
     unsigned hashval = 0;
 
@@ -61,7 +60,7 @@ unsigned hash(char *s) {
 }
 
 
-void insert_entry(node *hash_table[], char *w, char *d) {
+void insert_entry(node *hash_table[], const char *w, const char *d) {
 
     if (!hash_table[hash(w)])  {
 	hash_table[hash(w)] = malloc(sizeof(node));
@@ -153,7 +152,7 @@ void free_hash_table(node *hash_table[], unsigned length)
     // If put on heap--different story. Use one free for each malloc.
 }
 
-void delete_entry(node *hash_table[], char *w) {
+void delete_entry(node *hash_table[], const char *w) {
 
     node *n = hash_table[hash(w)];
     node *p = hash_table[hash(w)];
@@ -189,7 +188,7 @@ void delete_entry(node *hash_table[], char *w) {
     }
 }
 
-node *search_entry(node *hash_table[], char *w) {
+node *search_entry(node *hash_table[], const char *w) {
 
     if (!hash_table[hash(w)]) 
 	return NULL; 
@@ -209,5 +208,3 @@ node *search_entry(node *hash_table[], char *w) {
 
 
 }
-
-
