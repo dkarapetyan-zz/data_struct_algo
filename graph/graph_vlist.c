@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define sentinel -1
+#define SENTINEL -1
 
 struct adjnode;
 
 typedef struct vertex {
     int num;
     int distroot;
-    char *color;
+    const char *color;
     struct vertex *parent; 
     struct adjnode *AdjList;
     struct vertex *down;
@@ -21,13 +21,11 @@ typedef struct vertex {
 typedef struct adjnode{
     vertex *vertexptr;
     struct adjnode *right;
-}
-adjnode;
+} adjnode;
 
 
 
-typedef struct graph {
-
+typedef struct graph { 
     vertex *VertexList;
     int TotalVertices;
 } graph;
@@ -52,7 +50,8 @@ void print_list(graph *MyGraph, int num);
 void delete_list(graph *MyGraph, int num);
 void delete_graph(graph *MyGraph);
 void bfs(graph *MyGraph, int r);
-void dfs(graph *MyGraph, int r);
+void dfs_visit(vertex *v);
+void dfs(graph *MyGraph);
 vertex *search_vertex(graph *MyGraph, int num); 
 void print_path(graph *MyGraph, int num, int num2);
 int main()
@@ -70,8 +69,8 @@ int main()
     /*delete_vertex(MyGraph, 0);*/
     /*print_graph(MyGraph);*/
     bfs(MyGraph, 2);
-    print_path(MyGraph, 2, 3);
-    delete_graph(MyGraph);
+    print_path(MyGraph, 2, 5);
+    /*delete_graph(MyGraph);*/
     /*MyGraph=NULL;*/
     return 0;
 }
@@ -316,14 +315,18 @@ void bfs(graph *MyGraph, int r) {
         if (v->num != r) { // change attributes of all non-root vertices
 
             v->color = "white";
-            v->distroot = sentinel;
+            v->distroot = SENTINEL;
             v->parent = NULL;
         }
         else
             root  = v; // store root vertex
     }
-    if (root) { // don't return anything if root doesn't exist
 
+    if(!root)
+        printf("%s\n", "No vertex with such a key exists. Please try again.");
+
+    else
+    { 
         root->color = "black"; // change attributes of root vertex
         root->distroot = 0;
         root->parent = NULL;
@@ -354,10 +357,11 @@ void bfs(graph *MyGraph, int r) {
 void print_path(graph *MyGraph, int num, int num2) {
     vertex *s = search_vertex(MyGraph, num);
     vertex *v = search_vertex(MyGraph, num2);
-    if (v == s) {
+
+    if (v == s) 
         printf("%d", s->num);
-    }
-    else if (v->parent == NULL)
+
+    else if (v==NULL || v->parent == NULL)
         printf("%s\n", "No path to this vertex exists");
 
     else {
@@ -366,11 +370,34 @@ void print_path(graph *MyGraph, int num, int num2) {
     }
 
 }
-void dfs(graph *MyGraph, int r) {
 
-for (vertex *p = MyGraph->VertexList; p ; p = p->down) {
+void dfs_visit(vertex *v)
+{
+    v->color="black";
+    for (adjnode *n = v->AdjList; n; n = n->right)
+    {
+        if (strcmp(n->vertexptr->color, "white")==0)
+        {
+            n->vertexptr->parent = v;
+            dfs_visit(n->vertexptr);
+        }
+    }
+}
+
+
+void dfs(graph *MyGraph) {
+    for (vertex *p = MyGraph->VertexList; p ; p = p->down)
+    {
+        p->color = "white";
+        p->parent = NULL;
+    }
+
+    for (vertex *p = MyGraph->VertexList; p ; p = p->down)
+    {
+        if (strcmp(p->color, "white") == 0)
+            dfs_visit(p);
+    }
 
 }
 
-}
 
