@@ -152,14 +152,6 @@ linked_list<T>::~linked_list()
     }
 }
 
-//template <class T>
-//linked_list<T>::linked_list(const linked_list &other)
-//{
-//for (node<T> *p = other->get_head(); p !=nullptr; p = p->get_next())
-//{
-//}
-//}
-
     template <class T>
 void linked_list<T>::push(T key)
 {
