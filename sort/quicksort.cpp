@@ -1,70 +1,71 @@
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <vector>
+#include <iostream>
+using std::vector;
 // Quicksort recursive algorithm
 
 
-void quicksort(int *array, int left, int right);
-int partition(int *array, int left, int right);
+void quicksort(vector<int> &my_vec, int left, int right);
+int partition(vector<int> &my_vec, int left, int right);
 
 int main()
 {
-    int my_array[]={1, 7, 4, 12, 9, 2};
-    quicksort(my_array, 0, 5);
-    for (int i=0; i < 6; i++) {
-        printf("%d ", my_array[i]);
+    vector<int> my_vec = {1, 7, 4, 12, 9, 2};
+    quicksort(my_vec, 0, my_vec.size() -1);
+    for (auto i = my_vec.cbegin() ; i != my_vec.cend(); i++)
+    {
+        std::cout << *i << " ";
     }
-    return 0;
+
 }
 
 
 // swap function
 //
 
-void swap(int *array, int k, int m)
+void swap(vector<int> &my_vec, int k, int m)
 {
 
     int temp;
-    temp = array[k];
-    array[k] = array[m];
-    array[m]= temp;
+    temp = my_vec[k];
+    my_vec[k] = my_vec[m];
+    my_vec[m]= temp;
 }
 
-int partition(int *array, int left, int right)
+int partition(vector<int> &my_vec, int left, int right)
 {
     int last;
     int pivot = (left + right)/2;
 
-    // array of length greater than 1
+    // my_vec of length greater than 1
     //inductive (i.e. recursive) step
-    swap(array, left, pivot); // make partition element first element of array
+    swap(my_vec, left, pivot); // make partition element first element of my_vec
     last = left;
     for (int i=left +1 ; i <= right ; ++i) {
-        if (array[i] < array[left]) 
-            swap(array, i, ++last);
+        if (my_vec[i] < my_vec[left]) 
+            swap(my_vec, i, ++last);
     }
-    // have all elements less than array[left] immediately following
-    // it--once this list terminates, have all ellements greater than array[left].
+    // have all elements less than my_vec[left] immediately following
+    // it--once this list terminates, have all ellements greater than my_vec[left].
     // Now we restore partition element
-    swap(array, left, last); //done partitioning--last is our partition element
+    swap(my_vec, left, last); //done partitioning--last is our partition element
     return last;
 }
 
-void quicksort(int *array, int left, int right)
+void quicksort(vector<int> &my_vec, int left, int right)
 {
-    if (right - left < -1) // error checking--negative array length
+    if (right - left < -1) // error checking--negative my_vec length
     {
-        printf("%s\n", "You have supplied an array of negative length. Please try again");
+        std::cout << "You have supplied an my_vec of negative length. Please try again. \n";
         return;
     }
 
-    else if (right - left ==  -1  || right - left == 0) // array of length 0 or 1;
+    else if (right - left ==  -1  || right - left == 0) // my_vec of length 0 or 1;
     return;
 
     else {
-        int last = partition(array, left, right);
-        quicksort(array, left, last-1);
-        quicksort(array, last+1, right);
+        int last = partition(my_vec, left, right);
+        quicksort(my_vec, left, last-1);
+        quicksort(my_vec, last+1, right);
     }
 }
 
