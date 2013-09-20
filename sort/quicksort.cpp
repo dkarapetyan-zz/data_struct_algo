@@ -3,14 +3,19 @@
 using std::vector;
 // Quicksort recursive algorithm
 
+template <typename T>
+void quicksort(vector<T> &my_vec, int left, int right);
 
-void quicksort(vector<int> &my_vec, int left, int right);
-int partition(vector<int> &my_vec, int left, int right);
+template <typename T>
+T partition(vector<T> &my_vec, int left, int right);
+
+
+
 
 int main()
 {
-    vector<int> my_vec = {1, 7, 4, 12, 9, 2};
-    quicksort(my_vec, 0, my_vec.size() -1);
+    vector<double> my_vec = {1, 7.5, 4.3, 12, 9, 2};
+    quicksort<double>(my_vec, 0, my_vec.size() -1);
     for (auto i = my_vec.cbegin() ; i != my_vec.cend(); i++)
     {
         std::cout << *i << " ";
@@ -21,37 +26,38 @@ int main()
 
 // swap function
 //
-
-void swap(vector<int> &my_vec, int k, int m)
+template <typename T>
+void swap(vector<T> &my_vec, int k, int m)
 {
-
-    int temp;
+    T temp;
     temp = my_vec[k];
     my_vec[k] = my_vec[m];
     my_vec[m]= temp;
 }
 
-int partition(vector<int> &my_vec, int left, int right)
+template <typename T>
+T partition(vector<T> &my_vec, int left, int right)
 {
     int last;
     int pivot = (left + right)/2;
 
     // my_vec of length greater than 1
     //inductive (i.e. recursive) step
-    swap(my_vec, left, pivot); // make partition element first element of my_vec
+    swap<T>(my_vec, left, pivot); // make partition element first element of my_vec
     last = left;
     for (int i=left +1 ; i <= right ; ++i) {
         if (my_vec[i] < my_vec[left]) 
-            swap(my_vec, i, ++last);
+            swap<T>(my_vec, i, ++last);
     }
     // have all elements less than my_vec[left] immediately following
     // it--once this list terminates, have all ellements greater than my_vec[left].
     // Now we restore partition element
-    swap(my_vec, left, last); //done partitioning--last is our partition element
+    swap<T>(my_vec, left, last); //done partitioning--last is our partition element
     return last;
 }
 
-void quicksort(vector<int> &my_vec, int left, int right)
+template <typename T>
+void quicksort(vector<T> &my_vec, int left, int right)
 {
     if (right - left < -1) // error checking--negative my_vec length
     {
@@ -63,9 +69,9 @@ void quicksort(vector<int> &my_vec, int left, int right)
     return;
 
     else {
-        int last = partition(my_vec, left, right);
-        quicksort(my_vec, left, last-1);
-        quicksort(my_vec, last+1, right);
+        T last = partition<T>(my_vec, left, right);
+        quicksort<T>(my_vec, left, last-1);
+        quicksort<T>(my_vec, last+1, right);
     }
 }
 
