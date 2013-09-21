@@ -84,15 +84,15 @@ int linked_list<T>::size = 0;
     template <class T>
 node<T>::node()
 {
-    this->next = nullptr;
+    next = nullptr;
     linked_list<T>::size++;
 }
 
     template <class T>
 node<T>::node(T key, node *next)
 {
-    this->key = key;
-    this->next = next;
+    key = key;
+    next = next;
     ++linked_list<T>::size;
 
 }
@@ -114,7 +114,7 @@ node<T> * node<T>::get_next()
     template <class T>
 void node<T>::set_next(node<T> *next)
 {
-    this->next = next;
+    next = next;
 }
 
     template <class T>
@@ -126,7 +126,7 @@ T node<T>::get_key()
     template <class T>
 void node<T>::set_key(T key)
 {
-    this->key = key;
+    key = key;
 }
 
 
@@ -137,14 +137,14 @@ void node<T>::set_key(T key)
     template <class T>
 linked_list<T>::linked_list()
 {
-    this->head = nullptr;
-    this->size = 0;
+    head = nullptr;
+    size = 0;
 }
 
     template <class T>
 linked_list<T>::~linked_list()
 {
-    for (node<T> *p = this->head, *temp; p !=nullptr; )
+    for (node<T> *p = head, *temp; p !=nullptr; )
     {
         temp = p;
         p = p->get_next();
@@ -156,13 +156,13 @@ linked_list<T>::~linked_list()
 void linked_list<T>::push(T key)
 {
 
-    if (this->head==nullptr) {
-        this->head = new node<T>(key, nullptr);
+    if (head==nullptr) {
+        head = new node<T>(key, nullptr);
 
     }
     else {
-        node<T> *p = new node<T>(key, this->head); // create new node with next pointer pointing to current head
-        this->head = p; // update head
+        node<T> *p = new node<T>(key, head); // create new node with next pointer pointing to current head
+        head = p; // update head
     }
 
 
@@ -172,9 +172,9 @@ void linked_list<T>::push(T key)
     template <class T>
 node<T> * linked_list<T>::pop()
 {
-    node<T> *p = this->head;
+    node<T> *p = head;
     if (p != nullptr) {
-        this->head = this->head->get_next(); // update head
+        head = head->get_next(); // update head
     }
     return p;
 }
@@ -183,7 +183,7 @@ node<T> * linked_list<T>::pop()
     template <class T>
 node<T> * linked_list<T>::search(T key)
 {
-    node<T> *p = this->head;
+    node<T> *p = head;
 
     if (p == nullptr)
     {
@@ -258,9 +258,9 @@ void linked_list<T>::del(T key) //again, bit different from dlinked case
     {
 
 
-        if (p == this->head) // handle head of list
+        if (p == head) // handle head of list
         { 
-            this->head=p->get_next();
+            head=p->get_next();
             delete(p);
         }
 
@@ -269,7 +269,7 @@ void linked_list<T>::del(T key) //again, bit different from dlinked case
         {
             //find element immediately before p
             node<T> *hb;
-            for(hb = this->head; hb->get_next() != p; hb = hb->get_next()) {;}
+            for(hb = head; hb->get_next() != p; hb = hb->get_next()) {;}
 
             hb->set_next( p->get_next() );  
             delete(p);
@@ -282,13 +282,13 @@ void linked_list<T>::del(T key) //again, bit different from dlinked case
     template <class T>
 void linked_list<T>::print_list()
 {
-    if (this->head == nullptr)
+    if (head == nullptr)
     {
         cout << "Printing done homie" << endl;
     }
     else
     {
-        for (node<T> *p = this->head;  p != nullptr; p = p->get_next())
+        for (node<T> *p = head;  p != nullptr; p = p->get_next())
         {
             cout << p->get_key() << " ";
         }
