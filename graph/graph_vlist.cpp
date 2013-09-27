@@ -81,7 +81,7 @@ graph *create_graph(int v) { // put graph on heap
     if (v <=0) 
         return NULL;
 
-    else {
+    else { 
         graph *MyGraph = calloc(1,sizeof(graph));
 
         // initialize linked list of vertices (linked list going downwards), each with possible adjency linked list going to right

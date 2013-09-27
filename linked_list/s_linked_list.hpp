@@ -4,7 +4,6 @@
 #define S_LINKED_LIST_HPP 
 
 #include <iostream>
-#include <type_traits>
 using std::cout;
 using std::endl;
 using std::string;
@@ -19,7 +18,7 @@ class node
     public:
         // constructors
         node();
-        node(T key, node *next);
+        node(T __key, node *next);
 
 
         //destructor
@@ -31,13 +30,14 @@ class node
 
         // mutator methods
         void set_next(node *next);
-        void set_key(T key);
+        void set_key(T __key);
 };
 
 
 template <class T>
 class linked_list
 {
+
     private:
         node<T> * head;
 
@@ -63,12 +63,12 @@ class linked_list
         
 
         //functions
-        void push(T key);
+        void push(T __key);
         node<T> *pop();
-        node<T> *search(T key);
-        void addafter(T key, T afterkey);
-        void addbefore(T key, T beforekey); 
-        void del(T key);
+        node<T> *search(T __key);
+        void addafter(T __key, T afterkey);
+        void addbefore(T __key, T beforekey);
+        void del(T __key);
         void print_list();
 };
 
@@ -89,10 +89,10 @@ node<T>::node()
 }
 
     template <class T>
-node<T>::node(T key, node *next)
+node<T>::node(T __key, node *__next)
 {
-    key = key;
-    next = next;
+    key = __key;
+    next = __next;
     ++linked_list<T>::size;
 
 }
@@ -112,9 +112,9 @@ node<T> * node<T>::get_next()
 }
 
     template <class T>
-void node<T>::set_next(node<T> *next)
+void node<T>::set_next(node<T> *__next)
 {
-    next = next;
+    next = __next;
 }
 
     template <class T>
@@ -122,11 +122,10 @@ T node<T>::get_key()
 {
     return key;
 }
-
     template <class T>
-void node<T>::set_key(T key)
+void node<T>::set_key(T __key)
 {
-    key = key;
+    key = __key;
 }
 
 
@@ -153,15 +152,15 @@ linked_list<T>::~linked_list()
 }
 
     template <class T>
-void linked_list<T>::push(T key)
+void linked_list<T>::push(T __key)
 {
 
     if (head==nullptr) {
-        head = new node<T>(key, nullptr);
+        head = new node<T>(__key, nullptr);
 
     }
     else {
-        node<T> *p = new node<T>(key, head); // create new node with next pointer pointing to current head
+        node<T> *p = new node<T>(__key, head); // create new node with next pointer pointing to current head
         head = p; // update head
     }
 
@@ -208,7 +207,6 @@ void linked_list<T>::addafter(T key, T afterkey)
 
     if (s != nullptr)
     {
-
         node<T> *p = new node<T>;
 
         p->set_next(s->get_next());
@@ -219,14 +217,13 @@ void linked_list<T>::addafter(T key, T afterkey)
 }
 
     template <class T>
-void linked_list<T>::addbefore(T key, T beforekey) //non trivially different from dlinked case
+void linked_list<T>::addbefore(T __key, T beforekey) //non trivially different from dlinked case
 {
-    node<T> *s = search(key);
+    node<T> *s = search(__key);
 
     if (s == nullptr) {
         return; 
     }
-
     node<T> *hb = head;
 
     while(hb->get_next() != s ) {
@@ -234,12 +231,9 @@ void linked_list<T>::addbefore(T key, T beforekey) //non trivially different fro
     }
 
     node<T> *p = new node<T>;
-
     p->set_next(s);
     hb->set_next(p);
     p->set_key(beforekey);
-
-
 }
 
 
@@ -294,7 +288,6 @@ void linked_list<T>::print_list()
         }
     }
 }
-
 
 
 

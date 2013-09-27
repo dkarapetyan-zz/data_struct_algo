@@ -22,7 +22,7 @@ int main()
     string_list.addbefore("bye", "zorro");
 
     string_list.print_list();
-    cout << "\nThe linked list size is: " << string_list.size;
+    cout << "\nThe linked list size is: " << string_list.size << '\n' << endl;
 
     return 0;
 }
