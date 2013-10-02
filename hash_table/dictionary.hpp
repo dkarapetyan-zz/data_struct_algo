@@ -9,8 +9,8 @@ using std::vector;
 using std::list;
 using std::pair;
 using std::string;
-
-typedef list<pair<string, string>> llist;
+using std::move;
+typedef list<pair<string, string> > llist;
 typedef vector<llist> hash_table;
 
 const int HASHSIZE = 1000;
@@ -96,16 +96,16 @@ llist::iterator &&dictionary::search_entry(const string &w)
 {
     assert( __hash_table.empty() == false);
     if (__hash_table[hash(w)].empty() == true) 
-        return std::move(__hash_table[0].end()); 
+        return move(__hash_table[0].end());
     // search along linked list at hash(w) element in table
     else
     {
         for (auto i = __hash_table[hash(w)].begin(); i != __hash_table[hash(w)].end(); ++i)
         {
             if (i->first == w) 
-                return std::move(i);
+                return move(i);
         }
-        return std::move(__hash_table[0].end()); 
+        return move(__hash_table[0].end());
     }
 }
 

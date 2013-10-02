@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #define SIZE 10
 
 void my_heapsort(int array[], int len);
@@ -20,7 +19,7 @@ int main()
     my_heapsort(my_array, SIZE);
 
     for (int i = 0; i < SIZE; i++)
-        printf("%d ", my_array[i]); 
+        std::cout << my_array[i];
 
     return 0;
 }
@@ -53,7 +52,7 @@ void max_heapify(int array[], int len, int index)
     // error checking
     if (index >= len )
     {
-        printf("%s\n", "No int there. Please try again");
+        std::cout << "No int there. Please try again\n";
         return;
     }
 

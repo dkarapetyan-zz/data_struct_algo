@@ -1,6 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <iostream>
+#include <string>
 
 #define SIZE 100
 #define SENTINEL -9999
@@ -35,7 +34,7 @@ int parent(int x);
 int main()
 {
     heap my_heap;
-    memset(&my_heap, 0, sizeof(heap));
+    my_heap.alength = 0;
     my_heap.hlength = 5;
 
     for (int i = 0; i < my_heap.hlength; i++)
@@ -43,11 +42,11 @@ int main()
 
     build_max_heap(&my_heap);
     insert_key(&my_heap, 50);
-    printf("%d\n", heap_max(&my_heap));
-    printf("%d\n", heap_pop_max(&my_heap));
+    std::cout << heap_max(&my_heap);
+    std::cout << heap_pop_max(&my_heap);
 
     for (int i = 0; i < my_heap.hlength; i++)
-        printf("%d ", my_heap.array[i].key); 
+        std::cout << my_heap.array[i].key;
 
     return 0;
 }
@@ -77,7 +76,7 @@ void insert_key(heap *my_heap, int k)
 void increase_key(heap *my_heap, int i, int k)
 {
     if (k < my_heap->array[i].key)
-        printf("%s\n", "New key is smaller than old key. Please try again");
+        std::cout << "New key is smaller than old key. Please try again";
 
     else
     {
@@ -121,7 +120,7 @@ void max_heapify(heap *my_heap, int index)
     // error checking
     if (index > end)
     {
-        printf("%s\n", "No int there. Please try again");
+        std::cout << "No int there. Please try again\n";
         return;
     }
 

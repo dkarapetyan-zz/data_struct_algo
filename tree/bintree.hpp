@@ -12,7 +12,7 @@ class node {
     node *left;
     node *right;
     node *parent;
-    int data;
+    float data;
 
     public:
     node(): left(nullptr), right(nullptr), parent(nullptr), data(NAN){};
@@ -32,7 +32,7 @@ class tree
         void print_preorder(node* __root);
         void transplant(node *u, node *v);
         node *tree_max(node * __root);
-        node *tree_min(node * __rot);
+        node *tree_min(node * __root);
 
 
     public:

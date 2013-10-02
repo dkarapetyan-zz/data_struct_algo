@@ -1,13 +1,16 @@
 // graph implementation with array of pointers to linked lists
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <list>
-#include <queue>
+#include <deque>
 using std::string;
 using std::vector;
 using std::list;
-using std::queue;
+using std::deque;
+using std::cout;
+
 const int SENTINEL = -1;
 
 class vertex
@@ -15,20 +18,18 @@ class vertex
 	friend class graph;
 	int num;
 	int distroot;
-	vertex * parent;
 	string color;
+	vertex *parent;
 	list<vertex *> AdjList;
 
 public:
 	// constructors
-	vertex(int __num, int __distroot, string __color, parent __parent) :
-		num(__num), distroot(__distroot), color(__color), parent(__parent), AdjList(
-				new list<vertex *>)
-{
-}
+	vertex(int __num, int __distroot, string __color, vertex *__parent) :
+			num(__num), distroot(__distroot), color(__color), parent(__parent)
+	{
+	}
 	vertex(int __num) :
-		num(__num), distroot(SENTINEL), color("white"), parent(nullptr), AdjList(
-				new list<vertex *>)
+			num(__num), distroot(SENTINEL), color("white"), parent(nullptr)
 	{
 	}
 };
@@ -51,14 +52,14 @@ public:
 	void delete_list(int __num);
 	void delete_graph();
 	void bfs(int __r);
-	void dfs_visit(vertex *__v);
+	void dfs_visit(vertex &__v);
 	void dfs();
 	int max_vertex();
 	list<vertex>::iterator search_vertex(int __num);
 	void print_path(int __num, int __num2);
 };
 
-static int graph::TotalVertices = 0;
+int graph::TotalVertices = 0;
 
 int graph::max_vertex()
 {
@@ -140,7 +141,7 @@ void graph::print_list(int __num)
 	{ // standard for loop for traversing linked list
 		for (auto adj = p->AdjList.begin(); adj != p->AdjList.end(); ++adj)
 		{
-			std::cout << "->" << (*adj)->num;
+			cout << "->" << (*adj)->num;
 		}
 
 	}
@@ -150,7 +151,7 @@ void graph::print_graph()
 	for (auto p = vertices.begin(); p != vertices.end(); p++)
 	{
 		print_list(p->num);
-		std::cout << "\n";
+		cout << "\n";
 	}
 
 }
@@ -166,18 +167,6 @@ void graph::delete_list(int __num)
 		}
 	}
 }
-//
-//void delete_graph(graph *MyGraph)
-//{ // delete each vertex
-//	vertex *p, *temp;
-//	for (temp = p = MyGraph->VertexList; p; p = temp)
-//	{
-//		temp = p->down;
-//		delete_vertex(MyGraph, p->num);
-//	}
-//	free(MyGraph); //vertices aree all now recursively freed--
-//// so now can free MyGraph struct
-//}
 
 void graph::delete_vertex(int __num)
 {
@@ -220,13 +209,14 @@ void graph::bfs(int r)
 
 	}
 
-queue<vertex *> my_queue(&*root);
+	deque<vertex *> my_deque(1,&*root);
 
-	while (my_queue.empty() == false)
+	while (my_deque.empty() == false)
 	{
-		vertex *v = my_queue.pop();
+		vertex *v = my_deque.front();
+		my_deque.pop_front();
 
-		for (auto adj = v->AdjList.begin(); adj !=v->AdjList.end();  ++adj)
+		for (auto adj = v->AdjList.begin(); adj != v->AdjList.end(); ++adj)
 		{
 
 			if ((*adj)->color == "white")
@@ -234,7 +224,7 @@ queue<vertex *> my_queue(&*root);
 
 				(*adj)->distroot = v->distroot + 1;
 				(*adj)->parent = v;
-				my_queue.push(*adj);
+				my_deque.push_front(*adj);
 
 			}
 
@@ -244,50 +234,51 @@ queue<vertex *> my_queue(&*root);
 
 }
 
-void print_path(graph *MyGraph, int num, int num2)
+void graph::print_path(int num, int num2)
 {
-	vertex *s = search_vertex(MyGraph, num);
-	vertex *v = search_vertex(MyGraph, num2);
+	auto s = search_vertex(num);
+	auto v = search_vertex(num2);
 
 	if (v == s)
-		printf("%d", s->num);
+		cout << s->num;
 
-	else if (v == nullptr || v->parent == nullptr)
-		printf("%s\n", "No path to this vertex exists");
+	else if (v == vertices.end() || v->parent == nullptr)
+		cout << "No path to this vertex exists";
 
 	else
 	{
-		print_path(MyGraph, s->num, v->parent->num);
-		printf("%s%d", "->", v->num);
+		print_path(s->num, v->parent->num);
+		cout << "->" << v->num;
 	}
 
 }
 
-void dfs_visit(vertex *v)
+void graph::dfs_visit(vertex &v)
 {
-	v->color = "black";
-	for (adjnode *n = v->AdjList; n; n = n->right)
+	v.color = "black";
+	for (auto n = v.AdjList.begin(); n != v.AdjList.end(); n++)
 	{
-		if (strcmp(n->vertexptr->color, "white") == 0)
+		if ((*n)->color == "white")
 		{
-			n->vertexptr->parent = v;
-			dfs_visit(n->vertexptr);
+			(*n)->parent = &v;
+			dfs_visit(**n);
 		}
 	}
 }
 
-void dfs(graph *MyGraph)
+void graph::dfs()
 {
-	for (vertex *p = MyGraph->VertexList; p; p = p->down)
+	// initialize all vertices
+	for (auto p = vertices.begin(); p != vertices.end(); ++p)
 	{
 		p->color = "white";
 		p->parent = nullptr;
 	}
 
-	for (vertex *p = MyGraph->VertexList; p; p = p->down)
+	for (auto p = vertices.begin(); p != vertices.end(); ++p)
 	{
-		if (strcmp(p->color, "white") == 0)
-			dfs_visit(p);
+		if (p->color == "white")
+			dfs_visit(*p);
 	}
 
 }

@@ -4,7 +4,7 @@ using std::vector;
 // Quicksort recursive algorithm
 
 template <typename T>
-void quicksort(vector<T> &my_vec, int left, int right);
+void my_quicksort(vector<T> &my_vec, int left, int right);
 
 template <typename T>
 T partition(vector<T> &my_vec, int left, int right);
@@ -15,7 +15,7 @@ T partition(vector<T> &my_vec, int left, int right);
 int main()
 {
     vector<double> my_vec = {1, 7.5, 4.3, 12, 9, 2};
-    quicksort(my_vec, 0, my_vec.size() -1);
+    my_quicksort(my_vec, 0, my_vec.size() -1);
     for (auto i = my_vec.cbegin() ; i != my_vec.cend(); i++)
     {
         std::cout << *i << " ";
@@ -57,7 +57,7 @@ T partition(vector<T> &my_vec, int left, int right)
 }
 
 template <typename T>
-void quicksort(vector<T> &my_vec, int left, int right)
+void my_quicksort(vector<T> &my_vec, int left, int right)
 {
     if (right - left < -1) // error checking--negative my_vec length
     {
@@ -70,8 +70,8 @@ void quicksort(vector<T> &my_vec, int left, int right)
 
     else {
         T last = partition(my_vec, left, right);
-        quicksort(my_vec, left, last-1);
-        quicksort(my_vec, last+1, right);
+        my_quicksort(my_vec, left, last-1);
+        my_quicksort(my_vec, last+1, right);
     }
 }
 

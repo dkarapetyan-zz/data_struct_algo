@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <iostream>
+#include <ctime>
 
 // ith_smallest recursive algorithm
 //
@@ -10,10 +9,10 @@ int ith_smallest(int *array, int left, int right, int i);
 
 int main()
 {
-    int seed = time(NULL);
+    int seed = time(nullptr);
     srand(seed);
     int my_array[]={1, 7, 4, 12, 9, 2};
-    printf("%d\n", ith_smallest(my_array, 0, 5, 4));
+    std::cout << ith_smallest(my_array, 0, 5, 4) << "\n";
 
     return 0;
 }
@@ -41,7 +40,7 @@ int rand_partition(int *array, int left, int right)
 
     if (left - right > 1) // error checking--negative array length
     {
-        printf("%s\n", "You have supplied an array of negative length. Please try again");
+        std::cout << "You have supplied an array of negative length. Please try again\n";
         return -1;
     }
 

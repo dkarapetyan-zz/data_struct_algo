@@ -14,8 +14,6 @@ int main()
     my_list.print_list();
     cout << "\nThe linked list size is: " << my_list.size << '\n' << endl;
 
-
-
     linked_list<std::string> string_list;
     string_list.push("hello");
     string_list.addafter("hello", "bye");
@@ -26,4 +24,5 @@ int main()
 
     return 0;
 }
+
 
