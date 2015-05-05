@@ -2,7 +2,7 @@
 
 int main() {
     linked_list<double> my_list;
-    my_list.push(double(25.1));
+    my_list.push(25.1);
     my_list.addafter(25.1, 17.3);
     my_list.addbefore(17.3, 5.7);
     my_list.pop();
