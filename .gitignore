@@ -1,0 +1,9 @@
+deitel
+teach_yourself_21_days
+
+**/Release
+**/Default
+**/Debug
+**/.idea
+**/.project
+**/.cproject
